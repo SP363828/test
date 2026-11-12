@@ -14,7 +14,7 @@ export default function Sidebar() {
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-paper p-4 md:flex dark:border-night-line dark:bg-night-card">
       <Link to="/dashboard" className="px-2 py-1"><Logo /></Link>
 
-      <nav className="mt-8 flex-1 space-y-1" aria-label="Principal">
+      <nav className="mt-8 flex-1 space-y-1" aria-label={t('nav.principal')}>
         {visibleItems(esAdmin).map(({ to, key, icon: Icon, color, admin }) => (
           <div key={to}>
             {admin && <p className="eyebrow px-3 pt-5 pb-2">{t('nav.admin')}</p>}
@@ -43,25 +43,26 @@ export default function Sidebar() {
 
 // Mini resumen del plan siempre visible: ayuda a entender el límite de cupos.
 function PlanResumen({ usuario }) {
+  const { t } = useTranslation()
   const reservas = useSelector((state) => state.reservas.todas)
   if (usuario?.plan === 'premium') {
     return (
       <div className="rounded-xl bg-brand-lavanda p-4 text-ink">
-        <p className="eyebrow text-ink/70">Plan</p>
+        <p className="eyebrow text-ink/70">{t('usage.plan')}</p>
         <p className="flex items-center gap-1 font-semibold"><Sparkles size={16} /> Premium</p>
-        <p className="text-xs text-ink/70">Reservas ilimitadas</p>
+        <p className="text-xs text-ink/70">{t('usage.unlimited')}</p>
       </div>
     )
   }
   const usados = Math.min(countUsedSlots(reservas), LIMITE_PLAN_PLUS)
   return (
     <div className="rounded-xl bg-paper-alt p-4 dark:bg-night">
-      <p className="eyebrow">Plan Plus</p>
-      <p className="mt-1 text-sm font-semibold">{usados} de {LIMITE_PLAN_PLUS} cupos</p>
+      <p className="eyebrow">{t('usage.plus')}</p>
+      <p className="mt-1 text-sm font-semibold">{t('usage.slots', { used: usados, max: LIMITE_PLAN_PLUS })}</p>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line dark:bg-night-line">
         <div className="h-full rounded-full bg-ink dark:bg-paper" style={{ width: `${(usados / LIMITE_PLAN_PLUS) * 100}%` }} />
       </div>
-      <Link to="/dashboard#plan" className="mt-3 inline-block text-xs font-semibold underline underline-offset-4">Pasar a Premium →</Link>
+      <Link to="/dashboard#plan" className="mt-3 inline-block text-xs font-semibold underline underline-offset-4">{t('usage.goPremium')}</Link>
     </div>
   )
 }

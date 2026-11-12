@@ -50,7 +50,7 @@ function UserMenu({ usuario }) {
   // Logout: se limpia el store (todos los slices escuchan cerrarSesion) y se va al login.
   const handleLogout = () => {
     dispatch(cerrarSesion())
-    toast.success('Sesión cerrada. ¡Hasta pronto!')
+    toast.success(t('nav.logoutOk'))
     navigate('/login')
   }
 
@@ -68,7 +68,7 @@ function UserMenu({ usuario }) {
         <span className="hidden text-left leading-tight sm:block">
           <span className="block text-sm font-semibold">{usuario?.username}</span>
           <span className="block font-mono text-[10px] tracking-wider text-ink-muted uppercase dark:text-slate-400">
-            {esAdmin ? 'Administrador' : `Plan ${usuario?.plan}`}
+            {esAdmin ? t('nav.administrador') : t('nav.planDe', { plan: usuario?.plan })}
           </span>
         </span>
         <ChevronDown size={16} className={`transition ${abierto ? 'rotate-180' : ''}`} />

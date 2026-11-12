@@ -42,12 +42,12 @@
   .label { @apply mb-1.5 block text-sm font-medium text-ink-soft dark:text-slate-300; }
   .field-error { @apply mt-1 text-xs font-medium text-[#c2410c] dark:text-brand-naranja; }
 
-  .btn, .btn-primary, .btn-secondary, .btn-danger, .btn-accent, .btn-ghost {
+  .btn-primary, .btn-secondary, .btn-danger, .btn-accent, .btn-ghost {
     @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-azul disabled:cursor-not-allowed disabled:opacity-40;
   }
-  /* Negro sobre blanco (se invierte en oscuro), como los botones de FADU */
+  /* Negro sobre blanco (se invierte en oscuro) */
   .btn-primary { @apply bg-ink text-paper hover:bg-ink-soft dark:bg-paper dark:text-ink dark:hover:bg-brand-lima; }
-  /* Naranja FADU con texto negro: blanco sobre #fb6435 no llega al contraste AA */
+  /* Naranja con texto negro: blanco sobre #fb6435 no llega al contraste AA */
   .btn-accent { @apply bg-brand-naranja text-ink hover:brightness-95; }
   .btn-secondary { @apply border border-line bg-paper text-ink hover:bg-paper-alt dark:border-night-line dark:bg-night-card dark:text-slate-100 dark:hover:bg-night-line; }
   .btn-ghost { @apply text-ink-soft hover:bg-paper-alt dark:text-slate-300 dark:hover:bg-night-line; }
@@ -55,7 +55,7 @@
   .btn-sm { @apply px-3.5 py-1.5 text-xs; }
   .btn-icon { @apply p-2; }
 
-  /* Etiquetas en mono y mayúsculas, como "GRADO / MAESTRÍA" en FADU */
+  /* Etiquetas en mono y mayúsculas */
   .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[11px] font-medium tracking-wide uppercase; }
   .eyebrow { @apply font-mono text-xs tracking-widest text-ink-muted uppercase dark:text-slate-400; }
 }

@@ -21,9 +21,9 @@ export default function UsageReport() {
   const usados = countUsedSlots(reservas)
   const pct = Math.min(100, Math.round((usados / LIMITE_PLAN_PLUS) * 100))
   const mensaje =
-    pct >= 100 ? 'Llegaste al límite. Liberá un cupo o pasate a Premium.'
-      : pct >= 75 ? 'Te queda poco espacio en tu plan.'
-        : 'Tenés lugar para seguir reservando.'
+    pct >= 100 ? t('usage.full')
+      : pct >= 75 ? t('usage.almost')
+        : t('usage.ok')
 
   return (
     <div className="card">
@@ -32,7 +32,7 @@ export default function UsageReport() {
         <span className="text-4xl font-bold tracking-tight">{pct}%</span>
       </div>
       {/* Barra segmentada: un bloque por cupo, más fácil de leer que una barra continua */}
-      <div className="mt-4 grid grid-cols-4 gap-1.5" role="meter" aria-valuemin={0} aria-valuemax={LIMITE_PLAN_PLUS} aria-valuenow={usados} aria-label="Cupos usados">
+      <div className="mt-4 grid grid-cols-4 gap-1.5" role="meter" aria-valuemin={0} aria-valuemax={LIMITE_PLAN_PLUS} aria-valuenow={usados} aria-label={t('usage.meter')}>
         {Array.from({ length: LIMITE_PLAN_PLUS }, (_, i) => (
           <div key={i} className={`h-3 rounded-full ${i < usados ? (pct >= 100 ? 'bg-brand-naranja' : 'bg-ink dark:bg-paper') : 'bg-line dark:bg-night-line'}`} />
         ))}

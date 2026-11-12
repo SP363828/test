@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-// Caché de traducciones de contenido dinámico: { 'en:Proyector portátil': 'Portable projector' }.
-// null significa que esa traducción falló: se muestra el original y no se reintenta.
+// Caché de traducciones de contenido dinámico: { 'Proyector portátil': 'Portable projector' }.
+// Evita volver a pedir a la API un texto que ya se tradujo.
 const initialState = {
-  porClave: {},
+  porTexto: {},
 }
 
 export const traduccionesSlice = createSlice({
@@ -11,7 +11,7 @@ export const traduccionesSlice = createSlice({
   initialState,
   reducers: {
     guardarTraduccion: (state, action) => {
-      state.porClave[action.payload.clave] = action.payload.traduccion
+      state.porTexto[action.payload.texto] = action.payload.traduccion
     },
   },
 })

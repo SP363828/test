@@ -34,7 +34,7 @@ export default function Login() {
     try {
       const respuesta = await loginApi(data)
       dispatch(iniciarSesion(respuesta))
-      toast.success(`¡Hola ${respuesta.usuario.username}!`)
+      toast.success(t('auth.hello', { name: respuesta.usuario.username }))
       // Si venía de una ruta protegida, vuelve a ella.
       navigate(location.state?.from?.pathname || '/dashboard', { replace: true })
     } catch (error) {

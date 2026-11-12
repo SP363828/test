@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -12,16 +13,16 @@ import ReservaResumen from './ReservaResumen'
 import { nuevaReservaSchema, reservaToApi } from '../../validation/schemas'
 import { createReservationApi } from '../../api/reservations'
 import { agregarReserva, cambiarFiltros } from '../../features/reservas/reservasSlice'
-import { BLOQUES, RECURRENCIAS, LIMITE_PLAN_PLUS, ETIQUETA_RECURRENCIA, countUsedSlots } from '../../utils/constants'
+import { BLOQUES, RECURRENCIAS, LIMITE_PLAN_PLUS, countUsedSlots, hoyLocal } from '../../utils/constants'
 
-const hoy = () => new Date().toISOString().slice(0, 10)
-const VALORES_INICIALES = { resources: [], bloques: [], fechaInicio: hoy(), fechaFin: '', tipoRecurrencia: 'unica' }
+// Función (no constante) para que la fecha de hoy se recalcule en cada reset.
+const valoresIniciales = () => ({ resources: [], bloques: [], fechaInicio: hoyLocal(), fechaFin: '', tipoRecurrencia: 'unica' })
 
 // Bloques agrupados por franja: más fácil de recorrer que 32 botones seguidos.
 const FRANJAS = [
-  { nombre: 'Mañana', bloques: BLOQUES.filter((b) => b < '12:00') },
-  { nombre: 'Tarde', bloques: BLOQUES.filter((b) => b >= '12:00' && b < '19:00') },
-  { nombre: 'Noche', bloques: BLOQUES.filter((b) => b >= '19:00') },
+  { nombre: 'reservas.morning', bloques: BLOQUES.filter((b) => b < '12:00') },
+  { nombre: 'reservas.afternoon', bloques: BLOQUES.filter((b) => b >= '12:00' && b < '19:00') },
+  { nombre: 'reservas.night', bloques: BLOQUES.filter((b) => b >= '19:00') },
 ]
 
 // Encabezado numerado de cada paso del formulario.
@@ -39,6 +40,7 @@ function Paso({ numero, titulo, children }) {
 
 // Alta de reserva en 3 pasos (un único useForm). Se bloquea si el usuario plus ya usó todos sus cupos.
 export default function ReservaForm({ recursoPreseleccionado }) {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const usuario = useSelector((state) => state.auth.usuario)
   const recursos = useSelector((state) => state.recursos.todos)
@@ -49,7 +51,7 @@ export default function ReservaForm({ recursoPreseleccionado }) {
 
   const { control, register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(nuevaReservaSchema),
-    defaultValues: VALORES_INICIALES,
+    defaultValues: valoresIniciales(),
   })
 
   // Si se llega desde el recomendador de IA o desde un recurso, se precarga.
@@ -66,11 +68,11 @@ export default function ReservaForm({ recursoPreseleccionado }) {
     return (
       <div className="card flex flex-col items-center gap-3 py-10 text-center">
         <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-naranja text-ink"><Lock size={24} /></span>
-        <p className="text-lg font-semibold">Llegaste al límite del plan Plus</p>
+        <p className="text-lg font-semibold">{t('reservas.limitTitle')}</p>
         <p className="max-w-md text-sm text-ink-muted dark:text-slate-400">
-          Usaste los {LIMITE_PLAN_PLUS} cupos disponibles. Eliminá una reserva para liberar espacio o pasate a Premium para reservar sin límites.
+          {t('reservas.limitDesc', { max: LIMITE_PLAN_PLUS })}
         </p>
-        <Link to="/dashboard#plan" className="btn-accent">Ver Premium</Link>
+        <Link to="/dashboard#plan" className="btn-accent">{t('reservas.seePremium')}</Link>
       </div>
     )
   }
@@ -80,8 +82,8 @@ export default function ReservaForm({ recursoPreseleccionado }) {
       const nueva = await createReservationApi(reservaToApi(data))
       dispatch(agregarReserva(nueva))
       dispatch(cambiarFiltros({})) // recarga el listado en la página 1
-      toast.success('¡Reserva confirmada!')
-      reset(VALORES_INICIALES)
+      toast.success(t('reservas.created'))
+      reset(valoresIniciales())
     } catch (error) {
       // 409: sin disponibilidad o límite del plan (lo valida el backend)
       toast.error(error.message)
@@ -90,50 +92,50 @@ export default function ReservaForm({ recursoPreseleccionado }) {
 
   const opcionesRecursos = recursos.map((r) => ({
     value: r._id,
-    label: `${r.name} · ${r.stock} u.`,
+    label: `${r.name} · ${t('recursos.units', { count: r.stock })}`,
     disabled: r.status !== 'available',
   }))
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="card space-y-5 md:p-6" noValidate>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-xl font-bold tracking-tight">Nueva reserva</h2>
-        {esPlus && <span className="badge bg-brand-lima text-ink">{cuposLibres} de {LIMITE_PLAN_PLUS} cupos libres</span>}
+        <h2 className="text-xl font-bold tracking-tight">{t('reservas.new')}</h2>
+        {esPlus && <span className="badge bg-brand-lima text-ink">{t('reservas.freeSlots', { free: cuposLibres, max: LIMITE_PLAN_PLUS })}</span>}
       </div>
 
-      <Paso numero="1" titulo="¿Qué querés reservar?">
+      <Paso numero="1" titulo={t('reservas.step1')}>
         {/* Controller: para inputs personalizados que no son un <input> nativo */}
         <Field error={errors.resources}>
           <Controller name="resources" control={control} render={({ field }) => (
             <ChipSelect options={opcionesRecursos} value={field.value} onChange={field.onChange} />
           )} />
-          {recursos.length === 0 && <p className="text-sm text-ink-muted">Todavía no hay recursos cargados.</p>}
+          {recursos.length === 0 && <p className="text-sm text-ink-muted">{t('reservas.noResources')}</p>}
         </Field>
       </Paso>
 
-      <Paso numero="2" titulo="¿Cuándo?">
+      <Paso numero="2" titulo={t('reservas.step2')}>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Repetición" error={errors.tipoRecurrencia}>
+          <Field label={t('reservas.repeat')} error={errors.tipoRecurrencia}>
             <select className="input" {...register('tipoRecurrencia')}>
-              {RECURRENCIAS.map((r) => <option key={r} value={r}>{ETIQUETA_RECURRENCIA[r]}</option>)}
+              {RECURRENCIAS.map((r) => <option key={r} value={r}>{t(`recurrencia.${r}`)}</option>)}
             </select>
           </Field>
-          <Field label={valores.tipoRecurrencia === 'unica' ? 'Fecha' : 'Desde'} error={errors.fechaInicio}>
-            <input type="date" min={hoy()} className="input" {...register('fechaInicio')} />
+          <Field label={valores.tipoRecurrencia === 'unica' ? t('reservas.date') : t('reservas.from')} error={errors.fechaInicio}>
+            <input type="date" min={hoyLocal()} className="input" {...register('fechaInicio')} />
           </Field>
           {/* La fecha de fin solo aparece si la reserva se repite (ver yup.when en el esquema) */}
           {valores.tipoRecurrencia !== 'unica' && (
-            <Field label="Hasta" error={errors.fechaFin}>
+            <Field label={t('reservas.to')} error={errors.fechaFin}>
               <input type="date" min={valores.fechaInicio} className="input" {...register('fechaFin')} />
             </Field>
           )}
         </div>
-        <Field label="Horarios (bloques de 30 min)" error={errors.bloques}>
+        <Field label={t('reservas.blocks')} error={errors.bloques}>
           <Controller name="bloques" control={control} render={({ field }) => (
             <div className="space-y-3">
               {FRANJAS.map(({ nombre, bloques }) => (
                 <div key={nombre} className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-3">
-                  <span className="eyebrow w-16 shrink-0 pt-1.5">{nombre}</span>
+                  <span className="eyebrow w-16 shrink-0 pt-1.5">{t(nombre)}</span>
                   <ChipSelect options={bloques.map((b) => ({ value: b, label: b }))} value={field.value} onChange={field.onChange} />
                 </div>
               ))}
@@ -142,17 +144,17 @@ export default function ReservaForm({ recursoPreseleccionado }) {
         </Field>
       </Paso>
 
-      <Paso numero="3" titulo="Confirmá">
+      <Paso numero="3" titulo={t('reservas.step3')}>
         <ReservaResumen valores={valores} cuposNuevos={cuposNuevos} esPlus={esPlus} />
         {excedeLimite && (
           <p className="rounded-xl bg-brand-naranja/15 p-3 text-sm font-medium">
-            Esta reserva ocupa {cuposNuevos} cupos y te quedan {cuposLibres}. Quitá recursos u horarios.
+            {t('reservas.exceeds', { nuevos: cuposNuevos, libres: cuposLibres })}
           </p>
         )}
         <div className="flex flex-wrap justify-end gap-2">
-          <button type="button" className="btn-ghost" onClick={() => reset(VALORES_INICIALES)}>Limpiar</button>
+          <button type="button" className="btn-ghost" onClick={() => reset(valoresIniciales())}>{t('common.clear')}</button>
           <button type="submit" className="btn-primary" disabled={isSubmitting || excedeLimite}>
-            {isSubmitting && <Spinner />} Confirmar reserva
+            {isSubmitting && <Spinner />} {t('reservas.confirm')}
           </button>
         </div>
       </Paso>

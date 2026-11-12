@@ -34,7 +34,7 @@ export default function Register() {
       const respuesta = await registerApi({ username, email, password, passwordRepeat })
       // Auto-login: la API ya devuelve el token, se guarda la sesión directamente.
       dispatch(iniciarSesion(respuesta))
-      toast.success('¡Cuenta creada! Bienvenido 🎉')
+      toast.success(t('auth.registered'))
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setErrorApi(error.message)
@@ -63,7 +63,7 @@ export default function Register() {
         <Field error={errors.aceptaTerminos}>
           <label className="flex items-center gap-2 text-sm text-ink-soft dark:text-slate-300">
             <input type="checkbox" className="h-4 w-4 accent-black" {...register('aceptaTerminos')} />
-            Acepto los términos y condiciones
+            {t('auth.acceptTerms')}
           </label>
         </Field>
         <button type="submit" className="btn-primary w-full" disabled={!isValid || isSubmitting}>
