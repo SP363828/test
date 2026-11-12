@@ -151,7 +151,7 @@ export default function ReservaForm({ recursoPreseleccionado }) {
         <ReservaResumen valores={valores} cuposNuevos={cuposNuevos} esPlus={esPlus} />
         {excedeLimite && (
           <p className="rounded-xl bg-brand-naranja/15 p-3 text-sm font-medium">
-            {t('reservas.exceeds', { nuevos: cuposNuevos, libres: cuposLibres })}
+            {t('reservas.exceeds', { count: cuposNuevos, libres: cuposLibres })}
           </p>
         )}
         <div className="flex flex-wrap justify-end gap-2">

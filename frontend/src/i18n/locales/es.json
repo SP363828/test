@@ -63,7 +63,7 @@
     "step1": "¿Qué querés reservar?", "step2": "¿Cuándo?", "step3": "Confirmá",
     "noResources": "Todavía no hay recursos cargados.", "repeat": "Repetición", "date": "Fecha", "from": "Desde", "to": "Hasta",
     "blocks": "Horarios (bloques de 30 min)", "morning": "Mañana", "afternoon": "Tarde", "night": "Noche",
-    "exceeds": "Esta reserva ocupa {{nuevos}} cupos y te quedan {{libres}}. Quitá recursos u horarios.",
+    "exceeds_one": "Esta reserva ocupa {{count}} cupo y te quedan {{libres}}. Quitá recursos u horarios.", "exceeds_other": "Esta reserva ocupa {{count}} cupos y te quedan {{libres}}. Quitá recursos u horarios.",
     "confirm": "Confirmar reserva", "created": "¡Reserva confirmada!", "updated": "Reserva actualizada", "deleted": "Reserva eliminada",
     "startDate": "Fecha de inicio", "endDate": "Fecha de fin", "until": "hasta el {{fecha}}", "deleteAria": "Eliminar reserva",
     "deleteTitle": "Eliminar reserva", "deleteMsg": "¿Seguro que querés eliminar esta reserva? Esta acción no se puede deshacer.",
