@@ -58,7 +58,7 @@
     "title": "Mis reservas", "new": "Nueva reserva", "empty": "Todavía no tenés reservas",
     "pageEyebrow": "Reservas", "pageTitle": "Reservá en 3 pasos", "pageDesc": "Elegí qué necesitás, cuándo lo necesitás y confirmá. Abajo podés editar o eliminar tus reservas.",
     "limitTitle": "Llegaste al límite del plan Plus",
-    "limitDesc": "Usaste los {{max}} cupos disponibles. Eliminá una reserva para liberar espacio o pasate a Premium para reservar sin límites.",
+    "limitDesc": "Usaste los {{max}} cupos disponibles. Solo podés repetir recursos y horarios que ya tenés reservados. Eliminá una reserva para liberar espacio o pasate a Premium.",
     "seePremium": "Ver Premium", "freeSlots": "{{free}} de {{max}} cupos libres",
     "step1": "¿Qué querés reservar?", "step2": "¿Cuándo?", "step3": "Confirmá",
     "noResources": "Todavía no hay recursos cargados.", "repeat": "Repetición", "date": "Fecha", "from": "Desde", "to": "Hasta",
