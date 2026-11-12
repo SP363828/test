@@ -13,7 +13,7 @@ import ReservaResumen from './ReservaResumen'
 import { nuevaReservaSchema, reservaToApi } from '../../validation/schemas'
 import { createReservationApi } from '../../api/reservations'
 import { agregarReserva, cambiarFiltros } from '../../features/reservas/reservasSlice'
-import { BLOQUES, RECURRENCIAS, LIMITE_PLAN_PLUS, countUsedSlots, hoyLocal } from '../../utils/constants'
+import { BLOQUES, RECURRENCIAS, LIMITE_PLAN_PLUS, combinacionesActivas, hoyLocal } from '../../utils/constants'
 
 // Función (no constante) para que la fecha de hoy se recalcule en cada reset.
 const valoresIniciales = () => ({ resources: [], bloques: [], fechaInicio: hoyLocal(), fechaFin: '', tipoRecurrencia: 'unica' })
@@ -47,7 +47,8 @@ export default function ReservaForm({ recursoPreseleccionado }) {
   const reservas = useSelector((state) => state.reservas.todas)
 
   const esPlus = usuario?.plan === 'plus' && usuario?.rol !== 'admin'
-  const cuposLibres = esPlus ? LIMITE_PLAN_PLUS - countUsedSlots(reservas) : Infinity
+  const usadas = combinacionesActivas(reservas)
+  const cuposLibres = esPlus ? LIMITE_PLAN_PLUS - usadas.size : Infinity
 
   const { control, register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(nuevaReservaSchema),
@@ -61,21 +62,11 @@ export default function ReservaForm({ recursoPreseleccionado }) {
 
   // watch(): para mostrar/ocultar campos, calcular cupos y armar el resumen en vivo.
   const valores = watch()
-  const cuposNuevos = valores.resources.length * valores.bloques.length
+  // Como en el backend, solo consumen cupo las combinaciones recurso+horario que el usuario todavía no tiene.
+  const cuposNuevos = valores.resources
+    .flatMap((recurso) => valores.bloques.map((bloque) => `${recurso}-${bloque}`))
+    .filter((combinacion) => !usadas.has(combinacion)).length
   const excedeLimite = esPlus && cuposNuevos > cuposLibres
-
-  if (esPlus && cuposLibres <= 0) {
-    return (
-      <div className="card flex flex-col items-center gap-3 py-10 text-center">
-        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-naranja text-ink"><Lock size={24} /></span>
-        <p className="text-lg font-semibold">{t('reservas.limitTitle')}</p>
-        <p className="max-w-md text-sm text-ink-muted dark:text-slate-400">
-          {t('reservas.limitDesc', { max: LIMITE_PLAN_PLUS })}
-        </p>
-        <Link to="/dashboard#plan" className="btn-accent">{t('reservas.seePremium')}</Link>
-      </div>
-    )
-  }
 
   const onSubmit = async (data) => {
     try {
@@ -102,6 +93,18 @@ export default function ReservaForm({ recursoPreseleccionado }) {
         <h2 className="text-xl font-bold tracking-tight">{t('reservas.new')}</h2>
         {esPlus && <span className="badge bg-brand-lima text-ink">{t('reservas.freeSlots', { free: cuposLibres, max: LIMITE_PLAN_PLUS })}</span>}
       </div>
+
+      {/* Con el plan lleno el formulario sigue visible: se pueden repetir combinaciones que ya se tienen */}
+      {esPlus && cuposLibres <= 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl bg-brand-naranja/15 p-4">
+          <Lock size={20} className="shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold">{t('reservas.limitTitle')}</p>
+            <p className="text-sm text-ink-soft dark:text-slate-300">{t('reservas.limitDesc', { max: LIMITE_PLAN_PLUS })}</p>
+          </div>
+          <Link to="/dashboard#plan" className="btn-accent btn-sm">{t('reservas.seePremium')}</Link>
+        </div>
+      )}
 
       <Paso numero="1" titulo={t('reservas.step1')}>
         {/* Controller: para inputs personalizados que no son un <input> nativo */}

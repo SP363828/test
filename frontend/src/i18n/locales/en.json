@@ -58,7 +58,7 @@
     "title": "My bookings", "new": "New booking", "empty": "You don't have bookings yet",
     "pageEyebrow": "Bookings", "pageTitle": "Book in 3 steps", "pageDesc": "Pick what you need, when you need it and confirm. Below you can edit or delete your bookings.",
     "limitTitle": "You reached the Plus plan limit",
-    "limitDesc": "You used all {{max}} available slots. Delete a booking to free space or go Premium to book without limits.",
+    "limitDesc": "You used all {{max}} available slots. You can only repeat resources and times you already booked. Delete a booking to free space or go Premium.",
     "seePremium": "See Premium", "freeSlots": "{{free}} of {{max}} free slots",
     "step1": "What do you want to book?", "step2": "When?", "step3": "Confirm",
     "noResources": "There are no resources yet.", "repeat": "Repeat", "date": "Date", "from": "From", "to": "To",

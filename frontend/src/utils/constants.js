@@ -10,14 +10,16 @@ export const RECURRENCIAS = ['unica', 'diaria', 'semanal', 'mensual']
 export const ESTADOS_RESERVA = ['active', 'completed', 'cancelled']
 export const ESTADOS_RECURSO = ['available', 'maintenance', 'inactive']
 
-// Cuenta pares recurso+bloque de reservas activas (misma regla que el backend).
-export function countUsedSlots(reservations) {
+// Pares recurso+bloque distintos de las reservas activas (misma regla que el backend).
+export function combinacionesActivas(reservations) {
   const set = new Set()
   reservations
     .filter((r) => r.status === 'active')
     .forEach((r) => r.resources.forEach((res) => r.bloques.forEach((b) => set.add(`${res}-${b}`))))
-  return set.size
+  return set
 }
+
+export const countUsedSlots = (reservations) => combinacionesActivas(reservations).size
 
 export const formatDate = (d) => new Date(d).toLocaleDateString('es-UY', { timeZone: 'UTC' })
 export const toInputDate = (d) => new Date(d).toISOString().slice(0, 10)
