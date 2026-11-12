@@ -31,7 +31,8 @@ export default function AiRecommender() {
     try {
       const data = await recommendResourceApi(descripcion.trim())
       // Si la IA no está disponible el backend responde 200 con recommendation: null.
-      if (!data.recommendation) setError(data.message || t('ia.unavailable'))
+      // Se usa el texto propio y no data.message para que respete el idioma elegido.
+      if (!data.recommendation) setError(t('ia.unavailable'))
       else setResultado(data)
     } catch (err) {
       setError(err.message)
