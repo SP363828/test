@@ -63,7 +63,7 @@
     "step1": "What do you want to book?", "step2": "When?", "step3": "Confirm",
     "noResources": "There are no resources yet.", "repeat": "Repeat", "date": "Date", "from": "From", "to": "To",
     "blocks": "Times (30 min blocks)", "morning": "Morning", "afternoon": "Afternoon", "night": "Night",
-    "exceeds": "This booking takes {{nuevos}} slots and you have {{libres}} left. Remove resources or times.",
+    "exceeds_one": "This booking takes {{count}} slot and you have {{libres}} left. Remove resources or times.", "exceeds_other": "This booking takes {{count}} slots and you have {{libres}} left. Remove resources or times.",
     "confirm": "Confirm booking", "created": "Booking confirmed!", "updated": "Booking updated", "deleted": "Booking deleted",
     "startDate": "Start date", "endDate": "End date", "until": "until {{fecha}}", "deleteAria": "Delete booking",
     "deleteTitle": "Delete booking", "deleteMsg": "Are you sure you want to delete this booking? This can't be undone.",
