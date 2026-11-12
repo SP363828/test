@@ -19,11 +19,11 @@ export default function PlanUpgrade() {
   if (usuario?.plan === 'premium') {
     return (
       <div id="plan" className="flex flex-col justify-between rounded-xl bg-brand-lavanda p-5 text-ink">
-        <p className="eyebrow text-ink/70">Tu plan</p>
+        <p className="eyebrow text-ink/70">{t('plan.yours')}</p>
         <div>
           <Sparkles size={28} strokeWidth={1.5} />
           <p className="mt-2 text-xl font-bold">{t('plan.already')}</p>
-          <p className="text-sm text-ink/70">Reservás sin límite de cupos.</p>
+          <p className="text-sm text-ink/70">{t('plan.noLimit')}</p>
         </div>
       </div>
     )
@@ -36,7 +36,7 @@ export default function PlanUpgrade() {
       // porque el backend toma el plan desde el token.
       const respuesta = await upgradePlanApi()
       dispatch(iniciarSesion(respuesta))
-      toast.success('¡Ahora sos Premium!')
+      toast.success(t('plan.upgraded'))
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -49,7 +49,7 @@ export default function PlanUpgrade() {
       <p className="eyebrow flex items-center gap-1 text-slate-400"><Crown size={14} /> Premium</p>
       <p className="mt-2 text-xl font-bold">{t('plan.title')}</p>
       <ul className="mt-3 space-y-1 text-sm text-slate-300">
-        {['Reservas ilimitadas', 'Más recursos por reserva', 'Sin esperar a liberar cupos'].map((b) => (
+        {[t('plan.benefit1'), t('plan.benefit2'), t('plan.benefit3')].map((b) => (
           <li key={b} className="flex items-center gap-2"><Check size={14} className="text-brand-lima" /> {b}</li>
         ))}
       </ul>

@@ -22,4 +22,11 @@ export function countUsedSlots(reservations) {
 export const formatDate = (d) => new Date(d).toLocaleDateString('es-UY', { timeZone: 'UTC' })
 export const toInputDate = (d) => new Date(d).toISOString().slice(0, 10)
 
-export const ETIQUETA_RECURRENCIA = { unica: 'Única vez', diaria: 'Diaria', semanal: 'Semanal', mensual: 'Mensual' }
+// Fecha de hoy "AAAA-MM-DD" según la hora local. No se usa toISOString() porque es UTC:
+// en Uruguay (-3h), después de las 21:00 devolvería la fecha de mañana.
+export const hoyLocal = () => {
+  const d = new Date()
+  const mes = String(d.getMonth() + 1).padStart(2, '0')
+  const dia = String(d.getDate()).padStart(2, '0')
+  return `${d.getFullYear()}-${mes}-${dia}`
+}

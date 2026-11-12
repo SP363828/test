@@ -1,36 +1,42 @@
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import toast from 'react-hot-toast'
 import { translateApi } from '../api/extras'
 import { guardarTraduccion } from '../features/traducciones/traduccionesSlice'
 
-const IDIOMA_ORIGINAL = 'es'
 const LARGO_MAXIMO = 500 // el mismo límite que valida el backend
 
-// Evita pedir dos veces el mismo texto si aparece en varios componentes a la vez.
-const enCurso = new Set()
-
-// Devuelve { traduccion, cargando } para un texto dinámico según el idioma de la interfaz.
-// Con la interfaz en español, o si la traducción falla, traduccion es null y se usa el original.
-export function useTraduccion(texto) {
+// Traducción a pedido (al inglés) de contenido dinámico: nombres y descripciones que vienen de la base.
+// Los textos fijos de la interfaz no pasan por acá: usan i18next.
+export function useTraduccion(textos) {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
-  const { i18n } = useTranslation()
-  const idioma = i18n.language
+  const guardadas = useSelector((state) => state.traducciones.porTexto)
+  const [pedida, setPedida] = useState(false)
+  const [cargando, setCargando] = useState(false)
 
-  const hayQueTraducir = Boolean(texto) && idioma !== IDIOMA_ORIGINAL && texto.length <= LARGO_MAXIMO
-  const clave = `${idioma}:${texto}`
-  const guardada = useSelector((state) => state.traducciones.porClave[clave])
-  const pendiente = hayQueTraducir && guardada === undefined
+  const pendientes = textos.filter((texto) => texto && texto.length <= LARGO_MAXIMO && !guardadas[texto])
+  // Si un texto cambia (ej: se edita el recurso) se vuelve al original hasta pedirla de nuevo.
+  const activa = pedida && pendientes.length === 0
 
-  useEffect(() => {
-    if (!pendiente || enCurso.has(clave)) return
-    enCurso.add(clave)
+  const alternar = async () => {
+    if (activa) return setPedida(false)
+    setCargando(true)
+    try {
+      const respuestas = await Promise.all(pendientes.map((texto) => translateApi(texto)))
+      // Si el servicio externo no está disponible, el backend responde translated: null.
+      if (respuestas.some((r) => !r.translated)) throw new Error()
+      respuestas.forEach((r, i) => dispatch(guardarTraduccion({ texto: pendientes[i], traduccion: r.translated })))
+      setPedida(true)
+    } catch {
+      toast.error(t('traduccion.error'))
+    } finally {
+      setCargando(false)
+    }
+  }
 
-    translateApi(texto, idioma)
-      .then((data) => dispatch(guardarTraduccion({ clave, traduccion: data.translated ?? null })))
-      .catch(() => dispatch(guardarTraduccion({ clave, traduccion: null })))
-      .finally(() => enCurso.delete(clave))
-  }, [pendiente, clave, texto, idioma, dispatch])
+  const traducir = (texto) => (activa && guardadas[texto]) || texto
 
-  return { traduccion: hayQueTraducir ? guardada ?? null : null, cargando: pendiente }
+  return { activa, cargando, alternar, traducir }
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './routes/ProtectedRoute'
@@ -8,14 +9,16 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
 
-// Code splitting: las pantallas privadas se descargan recién cuando se visitan
-// (el bundle inicial del login queda mucho más liviano).
+// Code splitting: las pantallas privadas se descargan recién cuando se visitan.
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Reservas = lazy(() => import('./pages/Reservas'))
 const Recursos = lazy(() => import('./pages/Recursos'))
 const Categorias = lazy(() => import('./pages/admin/Categorias'))
 
-const Cargando = () => <div className="py-20 text-center text-sm text-slate-500">Cargando...</div>
+function Cargando() {
+  const { t } = useTranslation()
+  return <div className="py-20 text-center text-sm text-slate-500">{t('common.loading')}</div>
+}
 
 export default function App() {
   return (

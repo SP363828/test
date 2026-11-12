@@ -1,20 +1,60 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
-  PieChart, Pie, Cell, Legend, AreaChart, Area,
-} from 'recharts'
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Filler,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+import { Bar, Doughnut, Line } from 'react-chartjs-2'
+import { ESTADOS_RESERVA } from '../../utils/constants'
 
-// Paleta categórica en orden fijo, con colores de FADU: azul, naranja y un menta más profundo
-// (el menta original #76ebb3 es muy claro para una gráfica). Validada para daltonismo.
+// Chart.js es modular: hay que registrar las piezas que se usan.
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Filler, Title, Tooltip, Legend)
+
+// Colores de las series: azul, naranja y un menta más oscuro que el de la marca (se lee mejor en una gráfica).
 const SERIES = ['#5584ff', '#fb6435', '#1baf7a']
-const ESTADO_LABEL = { active: 'Activas', completed: 'Completadas', cancelled: 'Canceladas' }
-const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-const axis = { stroke: '#646464', fontSize: 12, fontFamily: 'DM Mono', tickLine: false, axisLine: false }
-const tooltipStyle = { borderRadius: 12, border: 'none', background: '#000', color: '#fff', fontSize: 12 }
+// Gris medio: se lee bien tanto sobre fondo claro como oscuro.
+const TEXTO = '#8a8f98'
+const GRILLA = 'rgba(148, 163, 184, 0.25)'
+const FUENTE = { family: 'DM Mono', size: 12 }
+
+// Opciones comunes a las 3 gráficas.
+const opcionesBase = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false, labels: { color: TEXTO, font: FUENTE, usePointStyle: true } },
+    tooltip: { backgroundColor: '#000', titleColor: '#def294', bodyColor: '#fff', cornerRadius: 12, padding: 10 },
+  },
+}
+
+// Opciones para las gráficas con ejes (barras y línea).
+const opcionesEjes = {
+  ...opcionesBase,
+  scales: {
+    x: { ticks: { color: TEXTO, font: FUENTE }, grid: { display: false }, border: { display: false } },
+    y: { beginAtZero: true, ticks: { color: TEXTO, font: FUENTE, precision: 0 }, grid: { color: GRILLA }, border: { display: false } },
+  },
+}
+
+const opcionesDona = {
+  ...opcionesBase,
+  cutout: '60%',
+  plugins: { ...opcionesBase.plugins, legend: { ...opcionesBase.plugins.legend, display: true, position: 'bottom' } },
+}
 
 export default function Charts() {
+  const { t } = useTranslation()
   const reservas = useSelector((s) => s.reservas.todas)
   const recursos = useSelector((s) => s.recursos.todos)
 
@@ -22,73 +62,70 @@ export default function Charts() {
   const porRecurso = useMemo(() => {
     const counts = {}
     reservas.forEach((r) => r.resources.forEach((id) => { counts[id] = (counts[id] || 0) + 1 }))
-    return Object.entries(counts)
-      .map(([id, total]) => ({ name: recursos.find((x) => x._id === id)?.name || 'Eliminado', total }))
+    const top = Object.entries(counts)
+      .map(([id, total]) => ({ name: recursos.find((x) => x._id === id)?.name || t('charts.eliminado'), total }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 6)
-  }, [reservas, recursos])
+    return {
+      labels: top.map((d) => d.name),
+      datasets: [{ label: t('charts.reservas'), data: top.map((d) => d.total), backgroundColor: SERIES[0], borderRadius: 4, maxBarThickness: 36 }],
+    }
+  }, [reservas, recursos, t])
 
   const porEstado = useMemo(() => {
     const counts = {}
     reservas.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1 })
-    return Object.keys(ESTADO_LABEL)
-      .map((k) => ({ name: ESTADO_LABEL[k], value: counts[k] || 0 }))
-      .filter((d) => d.value > 0)
-  }, [reservas])
+    const presentes = ESTADOS_RESERVA.filter((k) => counts[k] > 0)
+    return {
+      labels: presentes.map((k) => t(`estadosReserva.${k}`)),
+      datasets: [{ data: presentes.map((k) => counts[k]), backgroundColor: SERIES, borderWidth: 0, spacing: 2 }],
+    }
+  }, [reservas, t])
 
   // Reservas por mes de inicio (últimos 6 meses hasta el próximo).
   const porMes = useMemo(() => {
+    const meses = t('fechas.mesesCortos', { returnObjects: true })
     const now = new Date()
     const months = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1)
-      return { key: `${d.getFullYear()}-${d.getMonth()}`, name: MESES[d.getMonth()], total: 0 }
+      return { key: `${d.getFullYear()}-${d.getMonth()}`, name: meses[d.getMonth()], total: 0 }
     })
     reservas.forEach((r) => {
       const d = new Date(r.fechaInicio)
       const m = months.find((x) => x.key === `${d.getUTCFullYear()}-${d.getUTCMonth()}`)
       if (m) m.total++
     })
-    return months
-  }, [reservas])
+    return {
+      labels: months.map((m) => m.name),
+      datasets: [{
+        label: t('charts.reservas'),
+        data: months.map((m) => m.total),
+        borderColor: SERIES[0],
+        backgroundColor: 'rgba(85, 132, 255, 0.15)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 4,
+        pointBackgroundColor: SERIES[0],
+      }],
+    }
+  }, [reservas, t])
 
   if (reservas.length === 0) {
-    return (
-      <div className="card text-center text-sm text-ink-muted">
-        Cuando tengas reservas vas a ver acá tus estadísticas 📈
-      </div>
-    )
+    return <div className="card text-center text-sm text-ink-muted">{t('charts.empty')}</div>
   }
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <ChartCard title="Recursos más reservados">
-        <BarChart data={porRecurso} margin={{ left: -20 }}>
-          <CartesianGrid vertical={false} stroke="#e3e7f0" strokeOpacity={0.5} />
-          <XAxis dataKey="name" {...axis} />
-          <YAxis allowDecimals={false} {...axis} />
-          <Tooltip contentStyle={tooltipStyle} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#def294' }} cursor={{ fill: 'rgba(148,163,184,0.15)' }} />
-          <Bar dataKey="total" name="Reservas" fill={SERIES[0]} radius={[4, 4, 0, 0]} maxBarSize={36} />
-        </BarChart>
+      <ChartCard title={t('charts.porRecurso')}>
+        <Bar data={porRecurso} options={opcionesEjes} />
       </ChartCard>
 
-      <ChartCard title="Reservas por estado">
-        <PieChart>
-          <Pie data={porEstado} dataKey="value" nameKey="name" innerRadius={55} outerRadius={85} paddingAngle={2} stroke="none" label>
-            {porEstado.map((_, i) => <Cell key={i} fill={SERIES[i]} />)}
-          </Pie>
-          <Tooltip contentStyle={tooltipStyle} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#def294' }} />
-          <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-        </PieChart>
+      <ChartCard title={t('charts.porEstado')}>
+        <Doughnut data={porEstado} options={opcionesDona} />
       </ChartCard>
 
-      <ChartCard title="Reservas por mes de inicio" className="lg:col-span-2">
-        <AreaChart data={porMes} margin={{ left: -20 }}>
-          <CartesianGrid vertical={false} stroke="#e3e7f0" strokeOpacity={0.5} />
-          <XAxis dataKey="name" {...axis} />
-          <YAxis allowDecimals={false} {...axis} />
-          <Tooltip contentStyle={tooltipStyle} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#def294' }} />
-          <Area type="monotone" dataKey="total" name="Reservas" stroke={SERIES[0]} strokeWidth={2} fill={SERIES[0]} fillOpacity={0.15} dot={{ r: 4 }} />
-        </AreaChart>
+      <ChartCard title={t('charts.porMes')} className="lg:col-span-2">
+        <Line data={porMes} options={opcionesEjes} />
       </ChartCard>
     </div>
   )
@@ -98,9 +135,8 @@ function ChartCard({ title, children, className = '' }) {
   return (
     <div className={`card ${className}`}>
       <h3 className="mb-4 eyebrow">{title}</h3>
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">{children}</ResponsiveContainer>
-      </div>
+      {/* El contenedor necesita alto fijo porque maintainAspectRatio es false */}
+      <div className="relative h-64">{children}</div>
     </div>
   )
 }

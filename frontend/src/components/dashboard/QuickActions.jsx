@@ -1,19 +1,21 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { CalendarPlus, Boxes, Sparkles, Crown, ArrowUpRight } from 'lucide-react'
 
-// Accesos rápidos en tarjetas de color plano (como la grilla de carreras de FADU).
+// Accesos rápidos en tarjetas de color plano.
 export default function QuickActions() {
+  const { t } = useTranslation()
   const usuario = useSelector((state) => state.auth.usuario)
   const esPlus = usuario?.plan === 'plus' && usuario?.rol !== 'admin'
 
   const acciones = [
-    { to: '/reservas', icon: CalendarPlus, code: 'RES', title: 'Nueva reserva', text: 'Elegí recurso y horario', color: 'bg-brand-lima' },
-    { to: '/recursos', icon: Boxes, code: 'CAT', title: 'Ver recursos', text: 'Salas, equipos y stock', color: 'bg-brand-celeste' },
-    { to: '#ia', icon: Sparkles, code: 'IA', title: 'Pedir recomendación', text: 'La IA elige por vos', color: 'bg-brand-rosa' },
+    { to: '/reservas', icon: CalendarPlus, code: 'RES', title: t('quick.newTitle'), text: t('quick.newText'), color: 'bg-brand-lima' },
+    { to: '/recursos', icon: Boxes, code: 'CAT', title: t('quick.recursosTitle'), text: t('quick.recursosText'), color: 'bg-brand-celeste' },
+    { to: '#ia', icon: Sparkles, code: 'IA', title: t('quick.iaTitle'), text: t('quick.iaText'), color: 'bg-brand-rosa' },
     esPlus
-      ? { to: '#plan', icon: Crown, code: 'PRO', title: 'Pasar a Premium', text: 'Reservas sin límite', color: 'bg-brand-naranja' }
-      : { to: '/reservas', icon: CalendarPlus, code: 'MIS', title: 'Mis reservas', text: 'Editar o cancelar', color: 'bg-brand-amarillo' },
+      ? { to: '#plan', icon: Crown, code: 'PRO', title: t('quick.premiumTitle'), text: t('quick.premiumText'), color: 'bg-brand-naranja' }
+      : { to: '/reservas', icon: CalendarPlus, code: 'MIS', title: t('quick.misTitle'), text: t('quick.misText'), color: 'bg-brand-amarillo' },
   ]
 
   return (

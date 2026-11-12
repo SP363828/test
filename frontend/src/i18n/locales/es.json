@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "dashboard": "Inicio", "reservas": "Mis reservas", "recursos": "Recursos", "categorias": "Categorías", "logout": "Cerrar sesión",
+    "dashboardDesc": "Resumen y estadísticas", "reservasDesc": "Crear y gestionar", "recursosDesc": "Salas y equipos", "categoriasDesc": "Organizar el catálogo",
+    "theme": "Tema", "language": "Idioma", "admin": "Administración", "principal": "Principal",
+    "administrador": "Administrador", "planDe": "Plan {{plan}}", "logoutOk": "Sesión cerrada. ¡Hasta pronto!",
+    "lightTheme": "Usar tema claro", "darkTheme": "Usar tema oscuro"
+  },
+  "auth": {
+    "loginTitle": "Bienvenido de nuevo", "loginSubtitle": "Ingresá para gestionar tus reservas",
+    "registerTitle": "Creá tu cuenta", "registerSubtitle": "Empezá gratis con el plan Plus",
+    "username": "Usuario", "email": "Email", "password": "Contraseña", "passwordRepeat": "Repetir contraseña",
+    "login": "Ingresar", "register": "Registrarme", "noAccount": "¿No tenés cuenta?", "hasAccount": "¿Ya tenés cuenta?",
+    "goRegister": "Registrate", "goLogin": "Ingresá",
+    "hello": "¡Hola {{name}}!", "registered": "¡Cuenta creada! Bienvenido 🎉", "acceptTerms": "Acepto los términos y condiciones",
+    "showPassword": "Mostrar contraseña", "hidePassword": "Ocultar contraseña",
+    "brandEyebrow": "Inventario y reservas", "brandTitle": "Todo lo que necesitás, reservado en segundos.",
+    "feature1Title": "Reservá", "feature1Text": "Salas y equipos por bloques de 30 minutos, únicas o recurrentes.",
+    "feature2Title": "Controlá", "feature2Text": "Stock en tiempo real: nunca se superponen dos reservas.",
+    "feature3Title": "Preguntale a la IA", "feature3Text": "Describí lo que necesitás y te recomienda el recurso ideal.",
+    "footer": "© 2026 ReservaYa · Obligatorio Full Stack"
+  },
+  "password": { "min6": "6 caracteres o más", "number": "Al menos un número", "upper": "Una mayúscula (recomendado)", "symbol": "Un símbolo (recomendado)" },
+  "dashboard": {
+    "subtitle": "Este es el resumen de tu actividad", "charts": "Estadísticas",
+    "morning": "Buenos días", "afternoon": "Buenas tardes", "evening": "Buenas noches", "activity": "Tu actividad",
+    "statRecursos": "Recursos", "statCategorias": "Categorías", "statActivas": "Reservas activas", "statDisponibles": "Recursos disponibles"
+  },
+  "quick": {
+    "newTitle": "Nueva reserva", "newText": "Elegí recurso y horario",
+    "recursosTitle": "Ver recursos", "recursosText": "Salas, equipos y stock",
+    "iaTitle": "Pedir recomendación", "iaText": "La IA elige por vos",
+    "premiumTitle": "Pasar a Premium", "premiumText": "Reservas sin límite",
+    "misTitle": "Mis reservas", "misText": "Editar o cancelar"
+  },
+  "upcoming": {
+    "title": "Próximas reservas", "seeAll": "Ver todas", "emptyTitle": "Nada agendado",
+    "emptyDesc": "Cuando reserves algo, lo vas a ver acá.", "emptyCta": "Hacer una reserva"
+  },
+  "usage": {
+    "title": "Uso del plan", "plus": "Plan Plus", "premium": "Plan Premium", "used": "{{used}} de {{max}} cupos usados", "total": "Reservas totales", "unlimited": "Reservas ilimitadas",
+    "full": "Llegaste al límite. Liberá un cupo o pasate a Premium.", "almost": "Te queda poco espacio en tu plan.", "ok": "Tenés lugar para seguir reservando.",
+    "meter": "Cupos usados", "plan": "Plan", "slots": "{{used}} de {{max}} cupos", "goPremium": "Pasar a Premium →"
+  },
+  "plan": {
+    "title": "Pasate a Premium", "cta": "Cambiar a Premium", "already": "Ya sos Premium ✨",
+    "yours": "Tu plan", "noLimit": "Reservás sin límite de cupos.", "upgraded": "¡Ahora sos Premium!",
+    "benefit1": "Reservas ilimitadas", "benefit2": "Más recursos por reserva", "benefit3": "Sin esperar a liberar cupos"
+  },
+  "ia": {
+    "eyebrow": "Asistente IA", "title": "¿No sabés qué reservar?", "subtitle": "Contale qué necesitás y te recomendamos el recurso ideal.",
+    "placeholder": "Ej: necesito proyectar una presentación para 10 personas", "label": "Describí lo que necesitás",
+    "thinking": "Pensando...", "recommend": "Recomendar", "unavailable": "La IA no está disponible en este momento. Probá más tarde.",
+    "weRecommend": "Te recomendamos", "book": "Reservar este recurso",
+    "example1": "Presentación para 10 personas", "example2": "Grabar un podcast", "example3": "Reunión por videollamada"
+  },
+  "reservas": {
+    "title": "Mis reservas", "new": "Nueva reserva", "empty": "Todavía no tenés reservas",
+    "pageEyebrow": "Reservas", "pageTitle": "Reservá en 3 pasos", "pageDesc": "Elegí qué necesitás, cuándo lo necesitás y confirmá. Abajo podés editar o eliminar tus reservas.",
+    "limitTitle": "Llegaste al límite del plan Plus",
+    "limitDesc": "Usaste los {{max}} cupos disponibles. Eliminá una reserva para liberar espacio o pasate a Premium para reservar sin límites.",
+    "seePremium": "Ver Premium", "freeSlots": "{{free}} de {{max}} cupos libres",
+    "step1": "¿Qué querés reservar?", "step2": "¿Cuándo?", "step3": "Confirmá",
+    "noResources": "Todavía no hay recursos cargados.", "repeat": "Repetición", "date": "Fecha", "from": "Desde", "to": "Hasta",
+    "blocks": "Horarios (bloques de 30 min)", "morning": "Mañana", "afternoon": "Tarde", "night": "Noche",
+    "exceeds": "Esta reserva ocupa {{nuevos}} cupos y te quedan {{libres}}. Quitá recursos u horarios.",
+    "confirm": "Confirmar reserva", "created": "¡Reserva confirmada!", "updated": "Reserva actualizada", "deleted": "Reserva eliminada",
+    "startDate": "Fecha de inicio", "endDate": "Fecha de fin", "until": "hasta el {{fecha}}", "deleteAria": "Eliminar reserva",
+    "deleteTitle": "Eliminar reserva", "deleteMsg": "¿Seguro que querés eliminar esta reserva? Esta acción no se puede deshacer.",
+    "noResultsTitle": "Sin resultados", "noResultsDesc": "Ninguna reserva coincide con esos filtros. Probá quitando alguno.",
+    "emptyDesc": "Completá el formulario de arriba para hacer la primera.", "goForm": "Ir al formulario",
+    "resource": "Recurso", "deletedResource": "Recurso eliminado"
+  },
+  "resumen": {
+    "title": "Resumen", "booking": "Reservás", "none": "ningún recurso todavía", "at": "a las", "pickDate": "Elegí una fecha",
+    "daily": "todos los días del {{inicio}} al {{fin}}", "weekly": "todos los {{dia}} del {{inicio}} al {{fin}}",
+    "monthly": "el día {{dia}} de cada mes, del {{inicio}} al {{fin}}", "once": "el {{inicio}}",
+    "consumes_one": "Consume {{count}} cupo de tu plan", "consumes_other": "Consume {{count}} cupos de tu plan",
+    "days": ["domingos", "lunes", "martes", "miércoles", "jueves", "viernes", "sábados"]
+  },
+  "filtros": {
+    "search": "Buscar por nombre de recurso", "status": "Estado", "allStatus": "Todos los estados", "order": "Orden",
+    "resource": "Recurso", "allResources": "Todos los recursos", "repeat": "Repetición", "allRepeat": "Toda repetición",
+    "from": "Desde", "to": "Hasta", "fromDate": "Desde {{fecha}}", "toDate": "Hasta {{fecha}}",
+    "remove": "Quitar filtro {{label}}", "clearAll": "Limpiar todo",
+    "sortNear": "Fecha: más próxima", "sortFar": "Fecha: más lejana", "sortNew": "Creación: más nuevas", "sortOld": "Creación: más viejas"
+  },
+  "recurrencia": { "unica": "Única vez", "diaria": "Diaria", "semanal": "Semanal", "mensual": "Mensual" },
+  "estadoReserva": { "active": "Activa", "completed": "Completada", "cancelled": "Cancelada" },
+  "estadosReserva": { "active": "Activas", "completed": "Completadas", "cancelled": "Canceladas" },
+  "estadoRecurso": { "available": "Disponible", "maintenance": "Mantenimiento", "inactive": "Inactivo" },
+  "recursos": {
+    "eyebrow": "Catálogo", "title": "Recursos", "desc": "Salas y equipos disponibles para reservar. Buscá por nombre o filtrá por categoría y estado.",
+    "new": "Nuevo recurso", "edit": "Editar recurso", "search": "Buscar por nombre", "allCategories": "Todas las categorías",
+    "notFoundTitle": "No encontramos recursos", "notFoundDesc": "Probá con otro nombre o quitá los filtros.", "clearFilters": "Quitar filtros",
+    "emptyTitle": "El catálogo está vacío", "emptyAdmin": "Cargá el primer recurso para que los usuarios puedan reservarlo.", "emptyUser": "Todavía no hay recursos para reservar.",
+    "deleted": "Recurso eliminado", "created": "Recurso creado", "updated": "Recurso actualizado",
+    "deleteTitle": "Eliminar recurso", "deleteMsg": "¿Eliminar \"{{name}}\"? También se borrará su imagen.", "deleteAria": "Eliminar {{name}}",
+    "noCategory": "Sin categoría", "units_one": "{{count}} unidad", "units_other": "{{count}} unidades", "book": "Reservar",
+    "name": "Nombre", "description": "Descripción", "stock": "Stock", "category": "Categoría", "status": "Estado", "choose": "Elegir...",
+    "preview": "Vista previa", "changeImage": "Cambiar imagen", "uploadImage": "Subir imagen", "imageHint": "JPG, PNG o WEBP · máx. 5MB"
+  },
+  "categorias": {
+    "eyebrow": "Administración", "title": "Categorías", "desc": "Agrupan los recursos del catálogo. Una categoría con recursos asociados no se puede eliminar.",
+    "new": "Nueva categoría", "edit": "Editar categoría", "created": "Categoría creada", "updated": "Categoría actualizada", "deleted": "Categoría eliminada",
+    "emptyTitle": "Sin categorías", "emptyDesc": "Creá la primera con el formulario para empezar a cargar recursos.",
+    "noDescription": "Sin descripción", "count_one": "{{count}} recurso", "count_other": "{{count}} recursos", "cantDelete": "No se puede eliminar: tiene recursos asociados",
+    "deleteTitle": "Eliminar categoría", "deleteMsg": "¿Eliminar la categoría \"{{name}}\"?"
+  },
+  "charts": {
+    "empty": "Cuando tengas reservas vas a ver acá tus estadísticas 📈", "porRecurso": "Recursos más reservados",
+    "porEstado": "Reservas por estado", "porMes": "Reservas por mes de inicio", "reservas": "Reservas", "eliminado": "Eliminado"
+  },
+  "fechas": {
+    "mesesCortos": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+  },
+  "notFound": { "eyebrow": "Error 404", "text": "La página que buscás no existe o fue movida.", "back": "Volver al inicio" },
+  "pagination": { "results_one": "{{count}} resultado", "results_other": "{{count}} resultados", "perPage": "{{n}} por página", "perPageLabel": "Resultados por página", "label": "Paginación", "prev": "Página anterior", "next": "Página siguiente" },
+  "traduccion": { "traducir": "Ver en inglés", "verOriginal": "Ver original", "error": "No se pudo traducir. Probá más tarde." },
+  "common": {
+    "save": "Guardar", "cancel": "Cancelar", "edit": "Editar", "delete": "Eliminar", "loading": "Cargando...",
+    "saving": "Guardando...", "create": "Crear", "clear": "Limpiar", "notAvailable": "No disponible"
+  },
+  "errors": { "unexpected": "Ocurrió un error inesperado", "network": "No se pudo conectar con el servidor", "sessionExpired": "Tu sesión expiró. Ingresá de nuevo." },
+  "validation": {
+    "required": "Este campo es obligatorio", "usernameRequired": "Ingresá tu usuario", "passwordRequired": "Ingresá tu contraseña",
+    "invalidDate": "Fecha inválida", "alphanumeric": "Solo letras y números, sin espacios",
+    "min3": "Mínimo 3 caracteres", "min6": "Mínimo 6 caracteres", "max30": "Máximo 30 caracteres", "max100": "Máximo 100 caracteres", "max500": "Máximo 500 caracteres",
+    "emailInvalid": "Email inválido", "needNumber": "Debe incluir al menos un número", "repeatPassword": "Repetí la contraseña",
+    "passwordsMismatch": "Las contraseñas no coinciden", "acceptTerms": "Tenés que aceptar los términos y condiciones",
+    "pickResource": "Elegí al menos un recurso", "pickBlock": "Elegí al menos un bloque horario", "invalidRecurrence": "Recurrencia inválida",
+    "pickRecurrence": "Elegí la recurrencia", "endRequired": "Indicá hasta cuándo se repite", "endAfterStart": "Debe ser igual o posterior a la fecha de inicio",
+    "pastDate": "No podés reservar en el pasado", "notNumber": "Debe ser un número", "integer": "Debe ser un número entero", "nonNegative": "No puede ser negativo",
+    "pickCategory": "Elegí una categoría", "imageType": "El archivo debe ser una imagen", "imageMax5mb": "La imagen no puede superar 5MB"
+  }
+}

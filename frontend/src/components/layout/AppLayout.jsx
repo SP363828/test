@@ -5,12 +5,14 @@ import toast from 'react-hot-toast'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import MobileNav from './MobileNav'
+import SpinnerGlobal from '../ui/SpinnerGlobal'
 import { getResourcesApi } from '../../api/resources'
 import { getCategoriesApi } from '../../api/categories'
 import { getAllReservationsApi } from '../../api/reservations'
 import { guardarRecursos } from '../../features/recursos/recursosSlice'
 import { guardarCategorias } from '../../features/categorias/categoriasSlice'
 import { guardarTodas } from '../../features/reservas/reservasSlice'
+import { mostrarSpinner, ocultarSpinner } from '../../features/spinner/spinnerSlice'
 
 // Layout de la parte privada. Al entrar carga en el store los datos que
 // comparten varias pantallas (recursos, categorías y reservas del usuario).
@@ -19,6 +21,7 @@ export default function AppLayout() {
 
   useEffect(() => {
     const cargarDatos = async () => {
+      dispatch(mostrarSpinner())
       try {
         const [recursos, categorias, reservas] = await Promise.all([
           getResourcesApi({ limit: 50 }),
@@ -30,6 +33,8 @@ export default function AppLayout() {
         dispatch(guardarTodas(reservas))
       } catch (error) {
         toast.error(error.message)
+      } finally {
+        dispatch(ocultarSpinner())
       }
     }
     cargarDatos()
@@ -46,6 +51,7 @@ export default function AppLayout() {
         </main>
       </div>
       <MobileNav />
+      <SpinnerGlobal />
     </div>
   )
 }

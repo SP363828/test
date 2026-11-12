@@ -1,10 +1,11 @@
-// Cliente HTTP centralizado: agrega la URL base, el token y normaliza errores.
-const BASE_URL = import.meta.env.VITE_API_URL
+// Cliente HTTP centralizado: usa la instancia de axios, agrega el token y normaliza errores.
+import axiosConfig from '../utils/axiosConfig'
+import i18n from '../i18n'
 
 let onUnauthorized = () => {}
 export const setOnUnauthorized = (fn) => { onUnauthorized = fn }
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(message, status) {
     super(message)
     this.status = status
@@ -12,10 +13,11 @@ export class ApiError extends Error {
 }
 
 export async function request(path, { method = 'GET', body, query, auth = true } = {}) {
-  const url = new URL(BASE_URL + path)
+  // Se descartan los parámetros vacíos para no mandar ?x=&y=
+  const params = {}
   if (query) {
     Object.entries(query).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v)
+      if (v !== undefined && v !== null && v !== '') params[k] = v
     })
   }
 
@@ -23,22 +25,20 @@ export async function request(path, { method = 'GET', body, query, auth = true }
   const token = localStorage.getItem('token')
   if (auth && token) headers.Authorization = `Bearer ${token}`
 
-  const isFormData = body instanceof FormData
-  if (body && !isFormData) headers['Content-Type'] = 'application/json'
+  // Con FormData (subida de imágenes) hay que pisar el Content-Type JSON por defecto
+  if (body instanceof FormData) headers['Content-Type'] = 'multipart/form-data'
 
-  let res
   try {
-    res = await fetch(url, { method, headers, body: isFormData ? body : body ? JSON.stringify(body) : undefined })
-  } catch {
-    throw new ApiError('No se pudo conectar con el servidor', 0)
+    const response = await axiosConfig.request({ url: path, method, data: body, params, headers })
+    if (response.status === 204) return null
+    return response.data
+  } catch (error) {
+    if (error.response) {
+      const { status, data = {} } = error.response
+      if (status === 401 && auth) onUnauthorized()
+      throw new ApiError(data?.message || data?.error || i18n.t('errors.unexpected'), status)
+    }
+    // Sin respuesta: error de red o timeout
+    throw new ApiError(i18n.t('errors.network'), 0)
   }
-
-  if (res.status === 204) return null
-  const data = await res.json().catch(() => ({}))
-
-  if (!res.ok) {
-    if (res.status === 401 && auth) onUnauthorized()
-    throw new ApiError(data.message || data.error || 'Ocurrió un error inesperado', res.status)
-  }
-  return data
 }

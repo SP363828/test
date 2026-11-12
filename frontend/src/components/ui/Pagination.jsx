@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 // Devuelve las páginas a mostrar: primera, última y vecinas de la actual, con "…" en los saltos.
@@ -12,21 +13,22 @@ function paginasVisibles(actual, total) {
 
 // onLimitChange es opcional: si viene, se muestra el selector de cantidad por página.
 export default function Pagination({ meta, onChange, onLimitChange, opciones = [5, 10, 20] }) {
+  const { t } = useTranslation()
   if (!meta || (meta.totalPages <= 1 && !(onLimitChange && meta.total > opciones[0]))) return null
   const { page, totalPages, total, limit } = meta
 
   return (
     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 text-sm dark:border-night-line">
       <div className="flex items-center gap-3">
-        <span className="eyebrow">{total} resultados</span>
+        <span className="eyebrow">{t('pagination.results', { count: total })}</span>
         {onLimitChange && (
-          <select className="input w-auto py-1 text-xs" value={limit} onChange={(e) => onLimitChange(Number(e.target.value))} aria-label="Resultados por página">
-            {opciones.map((n) => <option key={n} value={n}>{n} por página</option>)}
+          <select className="input w-auto py-1 text-xs" value={limit} onChange={(e) => onLimitChange(Number(e.target.value))} aria-label={t('pagination.perPageLabel')}>
+            {opciones.map((n) => <option key={n} value={n}>{t('pagination.perPage', { n })}</option>)}
           </select>
         )}
       </div>
-      <nav className="flex items-center gap-1" aria-label="Paginación">
-        <button className="btn-secondary btn-sm btn-icon" disabled={page <= 1} onClick={() => onChange(page - 1)} aria-label="Página anterior">
+      <nav className="flex items-center gap-1" aria-label={t('pagination.label')}>
+        <button className="btn-secondary btn-sm btn-icon" disabled={page <= 1} onClick={() => onChange(page - 1)} aria-label={t('pagination.prev')}>
           <ChevronLeft size={16} />
         </button>
         {paginasVisibles(page, totalPages).map((p, i) =>
@@ -43,7 +45,7 @@ export default function Pagination({ meta, onChange, onLimitChange, opciones = [
             </button>
           ),
         )}
-        <button className="btn-secondary btn-sm btn-icon" disabled={page >= totalPages} onClick={() => onChange(page + 1)} aria-label="Página siguiente">
+        <button className="btn-secondary btn-sm btn-icon" disabled={page >= totalPages} onClick={() => onChange(page + 1)} aria-label={t('pagination.next')}>
           <ChevronRight size={16} />
         </button>
       </nav>

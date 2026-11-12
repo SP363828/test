@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
+import Modal from 'react-modal'
 import Field from '../ui/Field'
 import ImageUpload from './ImageUpload'
 import { recursoSchema } from '../../validation/schemas'
@@ -9,10 +11,9 @@ import { createResourceApi, updateResourceApi } from '../../api/resources'
 import { agregarRecurso, modificarRecurso } from '../../features/recursos/recursosSlice'
 import { ESTADOS_RECURSO } from '../../utils/constants'
 
-const ESTADO_RECURSO_LABEL = { available: 'Disponible', maintenance: 'Mantenimiento', inactive: 'Inactivo' }
-
 // Modal de alta/edición de recurso (admin). recurso = null → alta.
 export default function RecursoForm({ recurso, onClose, onGuardado }) {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const categorias = useSelector((state) => state.categorias.todas)
 
@@ -34,10 +35,10 @@ export default function RecursoForm({ recurso, onClose, onGuardado }) {
       // Con imagen se envía como multipart/form-data (campo "imagen") y el backend la sube a Cloudinary.
       if (recurso) {
         dispatch(modificarRecurso(await updateResourceApi(recurso._id, data)))
-        toast.success('Recurso actualizado')
+        toast.success(t('recursos.updated'))
       } else {
         dispatch(agregarRecurso(await createResourceApi(data)))
-        toast.success('Recurso creado')
+        toast.success(t('recursos.created'))
       }
       onGuardado?.()
       onClose()
@@ -47,45 +48,51 @@ export default function RecursoForm({ recurso, onClose, onGuardado }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/40 p-4" onClick={onClose}>
-      <form onSubmit={handleSubmit(onSubmit)} onClick={(e) => e.stopPropagation()} className="card w-full max-w-lg space-y-4" noValidate>
-        <h2 className="text-lg font-semibold">{recurso ? 'Editar recurso' : 'Nuevo recurso'}</h2>
+    <Modal
+      isOpen
+      onRequestClose={onClose}
+      contentLabel={recurso ? t('recursos.edit') : t('recursos.new')}
+      overlayClassName="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/50 p-4 backdrop-blur-sm"
+      className="w-full max-w-lg outline-none"
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="card space-y-4" noValidate>
+        <h2 className="text-lg font-semibold">{recurso ? t('recursos.edit') : t('recursos.new')}</h2>
 
         <Field error={errors.imagen}>
           <Controller name="imagen" control={control} render={({ field }) => (
             <ImageUpload value={field.value} urlActual={recurso?.imagenUrl} onChange={field.onChange} />
           )} />
         </Field>
-        <Field label="Nombre" error={errors.name}>
+        <Field label={t('recursos.name')} error={errors.name}>
           <input className="input" {...register('name')} />
         </Field>
-        <Field label="Descripción" error={errors.description}>
+        <Field label={t('recursos.description')} error={errors.description}>
           <textarea rows={3} className="input" {...register('description')} />
         </Field>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Stock" error={errors.stock}>
+          <Field label={t('recursos.stock')} error={errors.stock}>
             <input type="number" min={0} className="input" {...register('stock')} />
           </Field>
-          <Field label="Categoría" error={errors.category}>
+          <Field label={t('recursos.category')} error={errors.category}>
             <select className="input" {...register('category')}>
-              <option value="">Elegir...</option>
+              <option value="">{t('recursos.choose')}</option>
               {categorias.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
             </select>
           </Field>
-          <Field label="Estado" error={errors.status}>
+          <Field label={t('recursos.status')} error={errors.status}>
             <select className="input" {...register('status')}>
-              {ESTADOS_RECURSO.map((s) => <option key={s} value={s}>{ESTADO_RECURSO_LABEL[s]}</option>)}
+              {ESTADOS_RECURSO.map((s) => <option key={s} value={s}>{t(`estadoRecurso.${s}`)}</option>)}
             </select>
           </Field>
         </div>
 
         <div className="flex justify-end gap-2 pt-2">
-          <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
+          <button type="button" className="btn-secondary" onClick={onClose}>{t('common.cancel')}</button>
           <button type="submit" className="btn-primary" disabled={!isValid || isSubmitting}>
-            {isSubmitting ? 'Guardando...' : 'Guardar'}
+            {isSubmitting ? t('common.saving') : t('common.save')}
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   )
 }

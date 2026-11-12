@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
@@ -11,6 +12,7 @@ import EmptyState from '../ui/EmptyState'
 import ConfirmDialog from '../ui/ConfirmDialog'
 import { getReservationsApi, deleteReservationApi } from '../../api/reservations'
 import { guardarListado, eliminarReserva, cambiarFiltros, FILTROS_INICIALES } from '../../features/reservas/reservasSlice'
+import { mostrarSpinner, ocultarSpinner } from '../../features/spinner/spinnerSlice'
 
 const CAMPOS_NUMERICOS = ['page', 'limit']
 
@@ -34,11 +36,12 @@ const filtrosParaApi = (filtros) => ({
 })
 
 export default function ReservaList() {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { listado, meta, filtros } = useSelector((state) => state.reservas)
   const [params, setParams] = useSearchParams()
   const [listo, setListo] = useState(false)
-  const [cargando, setCargando] = useState(true)
+  const cargando = useSelector((state) => state.spinner.cargando)
   const [aEliminar, setAEliminar] = useState(null)
   const [eliminando, setEliminando] = useState(false)
 
@@ -65,14 +68,14 @@ export default function ReservaList() {
     }, { replace: true })
 
     const cargar = async () => {
-      setCargando(true)
+      dispatch(mostrarSpinner())
       try {
         const respuesta = await getReservationsApi(filtrosParaApi(filtros))
         if (vigente) dispatch(guardarListado(respuesta))
       } catch (error) {
         if (vigente) toast.error(error.message)
       } finally {
-        if (vigente) setCargando(false)
+        dispatch(ocultarSpinner())
       }
     }
     cargar()
@@ -84,7 +87,7 @@ export default function ReservaList() {
     try {
       await deleteReservationApi(aEliminar._id)
       dispatch(eliminarReserva(aEliminar._id))
-      toast.success('Reserva eliminada')
+      toast.success(t('reservas.deleted'))
       // Si era la última de la página, se vuelve a la anterior; si no, se recarga la misma.
       const pagina = listado.length === 1 && filtros.page > 1 ? filtros.page - 1 : filtros.page
       dispatch(cambiarFiltros({ page: pagina }))
@@ -100,17 +103,17 @@ export default function ReservaList() {
 
   return (
     <div className="card">
-      <h2 className="mb-4 text-xl font-bold tracking-tight">Mis reservas</h2>
+      <h2 className="mb-4 text-xl font-bold tracking-tight">{t('reservas.title')}</h2>
       <ReservaFilters />
 
       {cargando && listado.length === 0 ? (
         <div className="space-y-3 pt-4"><Skeleton /><Skeleton /><Skeleton /></div>
       ) : listado.length === 0 ? (
         hayFiltros ? (
-          <EmptyState icon={SearchX} title="Sin resultados" description="Ninguna reserva coincide con esos filtros. Probá quitando alguno." color="bg-brand-amarillo" />
+          <EmptyState icon={SearchX} title={t('reservas.noResultsTitle')} description={t('reservas.noResultsDesc')} color="bg-brand-amarillo" />
         ) : (
-          <EmptyState icon={CalendarPlus} title="Todavía no tenés reservas" description="Completá el formulario de arriba para hacer la primera." color="bg-brand-lima">
-            <button className="btn-primary btn-sm" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Ir al formulario</button>
+          <EmptyState icon={CalendarPlus} title={t('reservas.empty')} description={t('reservas.emptyDesc')} color="bg-brand-lima">
+            <button className="btn-primary btn-sm" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>{t('reservas.goForm')}</button>
           </EmptyState>
         )
       ) : (
@@ -127,8 +130,8 @@ export default function ReservaList() {
 
       <ConfirmDialog
         open={!!aEliminar}
-        title="Eliminar reserva"
-        message="¿Seguro que querés eliminar esta reserva? Esta acción no se puede deshacer."
+        title={t('reservas.deleteTitle')}
+        message={t('reservas.deleteMsg')}
         onConfirm={confirmarEliminar}
         onCancel={() => setAEliminar(null)}
         loading={eliminando}
